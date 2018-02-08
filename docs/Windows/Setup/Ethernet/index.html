@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Raspberry Pi 3 - Windows SSH Setup</title>
+</head>
+<body>
+    <h1 style="text-align: center;">
+        Setting up an Ethernet Connection to the Raspberry Pi in Windows
+    </h1>
+    <h2>
+        Foreword
+    </h2>
+    <p>
+        I wrote this guide for Professor Benson's System Foundations class at the University of San Francisco. Part of the reason is because it would be more efficient if everyone just got these instructions and followed them, rather than if I were to scurry around like a rat and be the personal IT for all the Windows folks. From this pointer forward, I will not personally provide any more assistance or support. I have the expectation that you know how to read and follow a guide.
+    </p>
+    <p>
+        If you tried to read this guide and still cannot comprehend the message that I am trying to convey, then I recommend going to <a href="https://www.apple.com/mac/">this site</a> to help solve your problems.
+    </p>
+    <h2>
+        1. Requirements and Assumptions
+    </h2>
+    <p>
+        To waste the least amount of time on trivial matters, I will assume you have the following:
+    </p>
+    <ul>
+        <li>
+            A computer running Windows 95 or higher
+            <ul>
+                <li>32 bit or 64 bit does not matter.</li>
+                <li>
+                    Though if you're running anything less than the supported versions of Windows, there won't be any support
+                </li>
+            </ul>
+        </li>
+        <li>A Raspberry Pi</li>
+        <li>An Ethernet cable</li>
+        <li>
+            An SD card flashed with the latest version of Raspbian
+            <ul>
+                <li>
+                    If you flash it with anything other than Rapbian, some of these steps may not work.
+                </li>
+            </ul>
+        </li>
+        <li>A way to connect the SD card to your computer</li>
+        <li>A way to power the Raspberry Pi</li>
+        <li><b>Enough patience to not power on your Pi until I explicity tell you to</b></li>
+    </ul>
+    <p>
+        If you lack any of these, acquire them before continuing on this guide. Also, it is entirely possible that this method may not even work for you.
+    </p>
+    <h2>
+        2. Creating the "ssh" File
+    </h2>
+    <p>
+        Creating an ssh file in the SD card's boot partition tells the Raspbian on bootup to start up a one-time SSH server. We will take advantage of this to SSH in there and permanently enable the SSH server.
+    </p>
+    <p>
+        In order to create the "ssh" file, you must have "Hide extensions for known file types" disabled. If you do not, you will not be able to remove the extension to the "ssh" file.
+    </p>
+    <p>
+        To change these settings, search for "Show hidden files and folders" using Window's search feature and change the setting so that they match the circled area in the screenshot below.
+    </p>
+    <img src="images/File_Explorer_Options.png">
+    <p>
+        Next, power off your Pi if you haven't already and insert your SD card into your computer. Go to the boot partition of the SD card and add a text file. Name it "ssh" and remove the ".txt" extension. The file will be empty.
+    </p>
+    <img src="images/SSH_File.png">
+    <p>
+        Excellent. Now put this back into your Pi, but do not turn the Pi on yet.
+    </p>
+    <h2>
+        3. Sharing Internet via Ethernet
+    </h2>
+    <p>
+        Right click on the the internet connection icon on the lower right corner. Select the bottom-most option.
+    </p>
+    <img src="images/Right_Click_Options.png">
+    <p>
+        Next, select "Change adapter options." If you are running Windows 7, this option will be located to the left.
+    </p>
+    <img src="images/Network_Settings.png">
+    <p>
+        Listed in this window are your network adapters. You will need to know which Ethernet port the Raspberry Pi is connected to and which adapter connects to the Internet.
+    </p>
+    <img src="images/Network_Adapters.png">
+    <p>
+        Right click on the adpater that connects to the Internet and click on properties. In properties, click on the "Sharing" tab. Check "Allow other network users to connect through this computer's Internet connection" and select the Ethernet adapter that connects to the Pi.
+    </p>
+    <img src="images/Share_WiFi.png">
+    <p>
+        By default, Windows will assign the IP address of the Pi to some value in the 192.168.137.* range. This number might be different, so we can verify the IP address range by right clicking on the adapter that connects to the Pi and clicking on properties. Next, select "Internet Protocol Version 4 (TCP/IPv4)" and select "Properties." If the IP address is something other than 192.168.137.1, then write down those numbers. We will be using it later.
+    </p>
+    <img src="images/Ethernet.png">
+    <img src="images/Verify_Ethernet.png">
+    <h2>
+        4. Connecting to the Raspberry Pi
+    </h2>
+    <p>
+        To connect, you will need to be able to locate your Pi's IP address. The tool to do this is Nmap. You will need to download the file <a href="https://nmap.org/">here</a> and install it. A mirror download link is <a href="https://web.archive.org/web/20170803001503/https://nmap.org/dist/nmap-7.60-setup.exe">here</a>, in case the original website goes down.
+    </p>
+    <p>
+        Next, you will need a client that can use SSH to access your Pi. Various methods include <a href="https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html">PuTTY</a>, <a href="https://git-scm.com/">Git for Windows</a>, <a href="https://www.cygwin.com/">Cygwin</a>, and <a href="http://www.msys2.org/">MSYS2</a>. PuTTY provides a GUI for remote access and can be used for other purposes aside from SSH, while the others are command line tools. This guide will utilize PuTTY, but you are free to use the other programs listed. I won't provide support for you if you don't know what you are doing with them though.
+    </p>
+    <p>
+        Now that all the preresequites have been acquired, power on your Pi. Open up ZenMap (the Nmap GUI) and recall the IP assigned to the Ethernet port connecting to your Pi. Set "Target" to the IP address, but for the last number, change it to and asterisk/star character. Then, change "Profile" to "Ping scan." Afterward, click "Scan." This process should not take more than 30 seconds. If it does, cancel it and start up a new scan. When the scan is complete, the IP address of your Pi will be printed out.
+    </p>
+    <img src="images/ZenMap.png">
+    <p>
+        Open up PuTTY. Copy the IP from ZenMap and paste it into "Host Name (or IP address)." Make sure "Port" is 22 and "Connection type" to SSH. Click "Open" and you should now be connected to your Pi.
+    </p>
+    <img src="images/PuTTY.png">
+    <h2>
+        5. Permanently Enable SSH
+    </h2>
+    <p>
+        After logging into your Pi, you will want the SSH server to be permanently enabled. Type "sudo raspi-config" to open up the configuration editor. Select "Interfacing Options" and then select "SSH" using the arrow keys. Once you have confirmed that SSH is enabled, press TAB twice and press enter to finish configuration.
+    </p>
+    <img src="images/sudo.png">
+    <img src="images/Interfacing_Options.png">
+    <img src="images/SSH_Option.png">
+    <p>
+        Congratulations! You have now enabled SSH on your Pi. If you ever shut down your computer and boot it back up, your Pi will most likely not have the same IP address. Simply go through step 4 to retreive the IP and reconnect to your Pi.
+    </p>
+</body>
+</html>
